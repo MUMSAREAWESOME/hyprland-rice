@@ -1,0 +1,52 @@
+[bar]
+scale = 0.6499999761581421
+inset-edge = 0.5
+padding-ends = 1.5
+bg = "bg-base"
+background-opacity = 54
+rounding = "full"
+button-variant = "basic"
+button-rounding = "lg"
+dropdown-opacity = 96
+
+[[bar.layout]]
+monitor = "*"
+show = true
+left = [
+    "media",
+    "dashboard",
+    "hyprland-workspaces",
+]
+center = [
+    "cava",
+    "clock",
+    "cava",
+]
+right = [
+    "microphone",
+    "volume",
+    "notifications",
+]
+
+[styling.palette]
+bg = "#16161e"
+surface = "#1a1b26"
+elevated = "#292e42"
+fg = "#c0caf5"
+fg-muted = "#a9b1d6"
+primary = "#7aa2f7"
+red = "#f7768e"
+yellow = "#e0af68"
+green = "#9ece6a"
+blue = "#7dcfff"
+
+[modules.clock]
+format = "%I:%M %p"
+icon-show = false
+
+[modules.hyprland-workspaces]
+app-icons-show = true
+
+[wallpaper]
+cycling-enabled = true
+cycling-directory = "/home/mumsareawesome/Pictures/Wallpapers/asuka.png"

@@ -37,8 +37,10 @@ local menu        = "fuzzel"
 ---- AUTOSTART ----
 -------------------
 
-hl.on("hyprland.start", function () 
-   hl.exec_cmd("wayle panel start")
+hl.on("hyprland.start", function ()
+    hl.exec_cmd("awww-daemon")
+    hl.exec_cmd("awww img ~/Pictures/Wallpapers/asuka.png")
+    hl.exec_cmd("wayle panel start")
  end)
 
 -------------------------------
@@ -74,7 +76,7 @@ hl.env("HYPRCURSOR_SIZE", "24")
 ---- LOOK AND FEEL ----
 -----------------------
 
-require(looks)
+require("looks")
 
 ----------------
 ----  MISC  ----
@@ -128,7 +130,7 @@ hl.device({
 ---- KEYBINDINGS ----
 ---------------------
 
-require(keybinds)
+require("keybinds")
 
 --------------------------------
 ---- WINDOWS AND WORKSPACES ----
