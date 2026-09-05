@@ -3,7 +3,7 @@ This is my current Hyprland rice!
 
 To install the rice clone the repo into your downloads folder then cd into it and run
 
-'''bash
+'''
 chmod +x setup.sh
 
 ./setup.sh
