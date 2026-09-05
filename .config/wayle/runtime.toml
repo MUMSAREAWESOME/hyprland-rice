@@ -1,6 +1,7 @@
 [bar]
 scale = 0.6499999761581421
 inset-edge = 0.5
+inset-ends = 0.5
 padding-ends = 1.5
 bg = "bg-base"
 background-opacity = 76
@@ -23,6 +24,7 @@ center = [
     "cava",
 ]
 right = [
+    "bluetooth",
     "microphone",
     "volume",
     "notifications",
@@ -40,12 +42,21 @@ yellow = "#e0af68"
 green = "#9ece6a"
 blue = "#7dcfff"
 
+[modules.bluetooth]
+label-show = false
+
 [modules.clock]
 format = "%I:%M %p"
 icon-show = false
 
 [modules.hyprland-workspaces]
 app-icons-show = true
+
+[modules.microphone]
+label-show = false
+
+[modules.volume]
+label-show = false
 
 [wallpaper]
 cycling-enabled = true

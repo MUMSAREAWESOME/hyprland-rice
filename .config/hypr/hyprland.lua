@@ -27,7 +27,7 @@ local menu        = "fuzzel"
 
 hl.on("hyprland.start", function ()
     hl.exec_cmd("awww-daemon")
-    hl.exec_cmd("awww img ~/Pictures/Wallpapers/asuka.png")
+    hl.exec_cmd("awww img ~/.config/hypr/Wallpaper/asuka.png")
     hl.exec_cmd("wayle panel start")
  end)
 
