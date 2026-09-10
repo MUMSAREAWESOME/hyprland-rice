@@ -379,8 +379,7 @@ cursor_trail_decay 0.1 0.4
 #: started. When the cursor moves less than the threshold in both
 #: dimensions, the trail is skipped, reducing unnecessary cursor trail
 #: animation.
-
-cursor_trail_color none
+# cursor_trail_color none
 
 #: Set the color of the cursor trail when cursor_trail is enabled. If
 #: set to 'none' (the default), the cursor trail will use the cursor's
@@ -3297,3 +3296,12 @@ tab_bar_edge bottom
 #: }}}
 
 #: }}}
+
+
+# BEGIN_KITTY_THEME
+# Tokyo Night
+include current-theme.conf
+# END_KITTY_THEME
+
+
+shell /usr/bin/fish

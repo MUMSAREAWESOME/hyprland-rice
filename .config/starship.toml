@@ -1,308 +1,103 @@
-"$schema" = 'https://starship.rs/config-schema.json'
+# Don't print a new line at the start of the prompt
+add_newline = false
+# Pipes ╰─ ╭─
+# Powerline symbols                                     
+# Wedges 🭧🭒 🭣🭧🭓
+# Random noise 🬖🬥🬔🬗
+# Cool stuff 󰜥   
 
-[aws]
-symbol = " "
+# format = """
+# $directory $fill $git_branch $cmd_duration
+#  $character"""
+format = """
+$cmd_duration $directory$git_branch
+  $character"""
 
-[azure]
-symbol = " "
+[fill]
+symbol = '-'
+style = 'fg:245'
 
-[battery]
-full_symbol = "󰁹 "
-charging_symbol = "󰂄 "
-discharging_symbol = "󰂃 "
-unknown_symbol = "󰂑 "
-empty_symbol = "󰂎 "
+# Replace the "❯" symbol in the prompt with "➜"
+[character]                            # The name of the module we are configuring is "character"
+success_symbol = "[ ](bold fg:243)"
+error_symbol = "[ ](bold fg:244)"
 
-[buf]
-symbol = " "
-
-[bun]
-symbol = " "
-
-[c]
-symbol = " "
-
-[cpp]
-symbol = " "
-
-[cmake]
-symbol = " "
-
-[cobol]
-symbol = " "
-
-[conda]
-symbol = " "
-
-[container]
-symbol = " "
-
-[crystal]
-symbol = " "
-
-[dart]
-symbol = " "
-
-[deno]
-symbol = " "
-
-[direnv]
-symbol = " "
-
-[directory]
-read_only = " 󰌾"
-
-[docker_context]
-symbol = " "
-
-[dotnet]
-symbol = " "
-
-[elixir]
-symbol = " "
-
-[elm]
-symbol = " "
-
-[erlang]
-symbol = " "
-
-[fennel]
-symbol = " "
-
-[fortran]
-symbol = " "
-
-[fossil_branch]
-symbol = " "
-
-[gcloud]
-symbol = "󱇶 "
-
-[gleam]
-symbol = " "
+# Disable the package module, hiding it from the prompt completely
+[package]
+disabled = true
 
 [git_branch]
-symbol = " "
+style = "bg: 252"
+symbol = "󰘬"
+truncation_length = 12
+truncation_symbol = ""
+format = " 󰜥 [](bold fg:252)[$symbol $branch(:$remote_branch)](fg:235 bg:252)[ ](bold fg:252)"
 
 [git_commit]
-tag_symbol = '  '
+commit_hash_length = 4
+tag_symbol = " "
 
-[golang]
-symbol = " "
+[git_state]
+format = '[\($state( $progress_current of $progress_total)\)]($style) '
+cherry_pick = "[🍒 PICKING](bold red)"
 
-[gradle]
-symbol = " "
-
-[guix_shell]
-symbol = " "
-
-[haskell]
-symbol = " "
-
-[haxe]
-symbol = " "
-
-[helm]
-symbol = " "
-
-[hg_branch]
-symbol = " "
+[git_status]
+conflicted = " 🏳 "
+ahead = " 🏎💨 "
+behind = " 😰 "
+diverged = " 😵 "
+untracked = " 🤷 ‍"
+stashed = " 📦 "
+modified = " 📝 "
+staged = '[++\($count\)](green)'
+renamed = " ✍️ "
+deleted = " 🗑 "
 
 [hostname]
-ssh_symbol = " "
+ssh_only = false
+format =  "[•$hostname](bg:252 bold fg:235)[](bold fg:252)"
+trim_at = ".companyname.com"
+disabled = false
 
-[java]
-symbol = " "
-
-[julia]
-symbol = " "
-
-[kotlin]
-symbol = " "
-
-[kubernetes]
-symbol = "󱃾 "
-
-[lua]
-symbol = " "
-
-[maven]
-symbol = " "
+[line_break]
+disabled = false
 
 [memory_usage]
-symbol = "󰍛 "
+disabled = true
+threshold = -1
+symbol = " "
+style = "bold dimmed green"
 
-[meson]
-symbol = "󰔷 "
+[time]
+disabled = true
+format = '🕙[\[ $time \]]($style) '
+time_format = "%T"
 
-[mojo]
-symbol = "󰈸 "
+[username]
+style_user = "bold bg:252 fg:235"
+style_root = "red bold"
+format = "[](bold fg:252)[$user]($style)"
+disabled = false
+show_always = true
 
-[nats]
-symbol = " "
+[directory]
+home_symbol = " "
+read_only = "  "
+style = "bg:255 fg:240"
+truncation_length = 2
+truncation_symbol = ".../"
+format = '[](bold fg:255)[󰉋 → $path]($style)[](bold fg:255)'
 
-[netns]
-symbol = "󰛳 "
 
-[nim]
-symbol = " "
+[directory.substitutions]
+"Desktop" = "  "
+"Documents" = "  "
+"Downloads" = "  "
+"Music" = " 󰎈 "
+"Pictures" = "  "
+"Videos" = "  "
+"GitHub" = " 󰊤 "
 
-[nix_shell]
-symbol = " "
-
-[nodejs]
-symbol = " "
-
-[ocaml]
-symbol = " "
-
-[odin]
-symbol = "󰟢 "
-
-[opa]
-symbol = " "
-
-[openstack]
-symbol = " "
-
-[os.symbols]
-AIX = " "
-AlmaLinux = " "
-Alpaquita = " "
-Alpine = " "
-ALTLinux = " "
-Amazon = " "
-Android = " "
-AOSC = " "
-Arch = " "
-Artix = " "
-Bluefin = " "
-CachyOS = " "
-CentOS = " "
-Debian = " "
-DragonFly = " "
-Elementary = " "
-Emscripten = " "
-EndeavourOS = " "
-Fedora = " "
-FreeBSD = " "
-Garuda = " "
-Gentoo = " "
-HardenedBSD = "󰞌 "
-Illumos = " "
-InstantOS = " "
-Ios = "󰀷 "
-Kali = " "
-Linux = " "
-Mabox = " "
-Macos = " "
-Manjaro = " "
-Mariner = " "
-MidnightBSD = " "
-Mint = " "
-NetBSD = " "
-NixOS = " "
-Nobara = " "
-OpenBSD = " "
-OpenCloudOS = " "
-openEuler = " "
-openSUSE = " "
-OracleLinux = "󰺡 "
-PikaOS = " "
-Pop = " "
-Raspbian = " "
-Redhat = "󱄛 "
-RedHatEnterprise = "󱄛 "
-Redox = "󰀘 "
-RockyLinux = " "
-Solus = " "
-SUSE = " "
-Ubuntu = " "
-Ultramarine = " "
-Unknown = " "
-Uos = " "
-Void = " "
-Windows = "󰍲 "
-Zorin = " "
-
-[package]
-symbol = "󰏗 "
-
-[perl]
-symbol = " "
-
-[php]
-symbol = " "
-
-[pijul_channel]
-symbol = " "
-
-[pixi]
-symbol = "󰏗 "
-
-[pulumi]
-symbol = " "
-
-[purescript]
-symbol = " "
-
-[python]
-symbol = " "
-
-[raku]
-symbol = "󱖊 "
-
-[red]
-symbol = "󱍼 "
-
-[rlang]
-symbol = "󰟔 "
-
-[ruby]
-symbol = " "
-
-[rust]
-symbol = "󱘗 "
-
-[scala]
-symbol = " "
-
-[shlvl]
-symbol = "󰹍 "
-
-[singularity]
-symbol = " "
-
-[solidity]
-symbol = " "
-
-[spack]
-symbol = " "
-
-[status]
-symbol = " "
-
-[sudo]
-symbol = " "
-
-[swift]
-symbol = " "
-
-[terraform]
-symbol = " "
-
-[vlang]
-symbol = " "
-
-[typst]
-symbol = " "
-
-[vagrant]
-symbol = " "
-
-[xmake]
-symbol = " "
-
-[zig]
-symbol = " "
+[cmd_duration]
+min_time = 0
+format = '[](bold fg:252)[󰪢 $duration](bold bg:252 fg:235)[](bold fg:252)'
