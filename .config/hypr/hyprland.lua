@@ -26,9 +26,7 @@ local menu        = "fuzzel"
 -------------------
 
 hl.on("hyprland.start", function ()
-    hl.exec_cmd("awww-daemon")
-    hl.exec_cmd("awww img ~/.config/hypr/Wallpaper/asuka.png")
-    hl.exec_cmd("wayle panel start")
+    hl.exec_cmd("noctalia")
  end)
 
 -------------------------------
@@ -39,26 +37,6 @@ hl.on("hyprland.start", function ()
 
 hl.env("XCURSOR_SIZE", "24")
 hl.env("HYPRCURSOR_SIZE", "24")
-
-
------------------------
------ PERMISSIONS -----
------------------------
-
--- See https://wiki.hypr.land/Configuring/Advanced-and-Cool/Permissions/
--- Please note permission changes here require a Hyprland restart and are not applied on-the-fly
--- for security reasons
-
--- hl.config({
---   ecosystem = {
---     enforce_permissions = true,
---   },
--- })
-
--- hl.permission("/usr/(bin|local/bin)/grim", "screencopy", "allow")
--- hl.permission("/usr/(lib|libexec|lib64)/xdg-desktop-portal-hyprland", "screencopy", "allow")
--- hl.permission("/usr/(bin|local/bin)/hyprpm", "plugin", "allow")
-
 
 -----------------------
 ---- LOOK AND FEEL ----
@@ -169,3 +147,14 @@ hl.window_rule({
     move  = "20 monitor_h-120",
     float = true,
 })
+
+hl.window_rule({
+    match = { class = "dev.noctalia.Noctalia" },
+    float = true,
+    size = { 1080, 920 },
+})
+
+
+
+-- For Noctalia Color templates
+require("noctalia").apply_theme()
