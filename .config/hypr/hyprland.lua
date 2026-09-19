@@ -36,7 +36,10 @@ hl.on("hyprland.start", function ()
 -- See https://wiki.hypr.land/Configuring/Advanced-and-Cool/Environment-variables/
 
 hl.env("XCURSOR_SIZE", "24")
+hl.env("XCURSOR_THEME", "Bibata-Modern-Classic")
 hl.env("HYPRCURSOR_SIZE", "24")
+
+hl.exec_cmd("hyprctl setcursor Bibata-Modern-Classic 24")
 
 -----------------------
 ---- LOOK AND FEEL ----
