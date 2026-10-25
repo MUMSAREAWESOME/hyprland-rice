@@ -51,8 +51,8 @@ widget_order = [
     [desktop_widgets.widget.desktop-widget-0000000000000001]
     box_height = 64.0
     box_width = 144.0
-    cx = 104.0
-    cy = 96.0
+    cx = 88.0
+    cy = 80.0
     output = "HDMI-A-1"
     placement_height = 1440.0
     placement_width = 2560.0
@@ -62,8 +62,8 @@ widget_order = [
     [desktop_widgets.widget.desktop-widget-0000000000000002]
     box_height = 128.0
     box_width = 288.0
-    cx = 176.0
-    cy = 208.0
+    cx = 160.0
+    cy = 192.0
     output = "HDMI-A-1"
     placement_height = 1440.0
     placement_width = 2560.0
@@ -73,8 +73,8 @@ widget_order = [
     [desktop_widgets.widget.desktop-widget-0000000000000003]
     box_height = 64.0
     box_width = 128.0
-    cx = 256.0
-    cy = 96.0
+    cx = 240.0
+    cy = 80.0
     output = "HDMI-A-1"
     placement_height = 1440.0
     placement_width = 2560.0
