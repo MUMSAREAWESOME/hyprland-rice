@@ -12,6 +12,7 @@ local window = hl.dsp.window
 hl.bind(mainMod .. " + RETURN", hl.dsp.exec_cmd(terminal))
 local closeWindowBind = hl.bind(mainMod .. " + Q", hl.dsp.window.close())
 hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(terminal .. " -e spf"))
+hl.bind(mainMod .. " + SHIFT + E", hl.dsp.exec_cmd(terminal .. " -e sudo spf"))
 hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + P", hl.dsp.window.pseudo())
 hl.bind(mainMod .. " + J", hl.dsp.layout("togglesplit")) -- Dwindle only

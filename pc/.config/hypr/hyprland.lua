@@ -27,6 +27,7 @@ local menu        = "fuzzel"
 
 hl.on("hyprland.start", function ()
     hl.exec_cmd("noctalia")
+    hl.exec_cmd("cloudflared tunnel run --token eyJhIjoiN2NjZmZkYjJkNzZmMWQ2NGM0ODBmM2VmZDAxZmE0MDYiLCJ0IjoiYjAzNGJjMjYtODI3ZC00Y2RiLTgxYTMtNTk5NWFkZmZmYjUzIiwicyI6IlpEaGlPVE16T0RRdE9ESXpOUzAwWVRFNExUZzRNemN0TlRKbE1UWTRZalkwWVRCbSJ9")
  end)
 
 -------------------------------
