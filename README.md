@@ -12,6 +12,8 @@ sudo pacman -S noctalia superfile kew mpv ffmpeg 7zip jq poppler fd ripgrep fzf 
 yay -S bibata-cursor-theme
 ```
 
+for a jp keyboard (lets note)
+
 ```bash
 sudo localectl set-x11-keymap jp pc106
 ```
