@@ -3,23 +3,34 @@ enable_sounds = true
 
 [bar.default]
 background_opacity = 0.79999998211860657
-center = [ "audio_visualizer", "media", "audio_visualizer" ]
-end = [ "group:g1", "group:g2" ]
+center = [ "group:g6", "lrc" ]
+end = [ "group:g4", "group:g1", "group:g2" ]
 margin_edge = 2
 margin_ends = 3
 radius = 7
-start = [ "workspaces" ]
+start = [ "group:g3", "group:g5" ]
 thickness = 23
-widget_spacing = 10
+widget_spacing = 5
 
     [[bar.default.capsule_group]]
     accordion = false
     accordion_direction = "end"
     border_width = 1.0
     enabled = true
-    fill = "surface_variant"
+    fill = "surface_container"
     id = "g1"
     members = [ "bluetooth", "network" ]
+    opacity = 1.0
+    padding = 8.0
+
+    [[bar.default.capsule_group]]
+    accordion = false
+    accordion_direction = "end"
+    border_width = 1.0
+    enabled = true
+    fill = "surface_container"
+    id = "g2"
+    members = [ "notifications", "tray" ]
     opacity = 1.0
     padding = 6.0
 
@@ -28,9 +39,42 @@ widget_spacing = 10
     accordion_direction = "end"
     border_width = 1.0
     enabled = true
-    fill = "surface_variant"
-    id = "g2"
-    members = [ "notifications", "tray" ]
+    fill = "surface_container"
+    id = "g4"
+    members = [ "widget", "bar" ]
+    opacity = 1.0
+    padding = 6.0
+
+    [[bar.default.capsule_group]]
+    accordion = false
+    accordion_direction = "end"
+    border_width = 1.0
+    enabled = true
+    fill = "surface_container"
+    id = "g5"
+    members = [ "recorder", "screenshot" ]
+    opacity = 1.0
+    padding = 8.0
+
+    [[bar.default.capsule_group]]
+    accordion = false
+    accordion_direction = "end"
+    border_width = 1.0
+    enabled = true
+    fill = "surface_container"
+    id = "g3"
+    members = [ "clock", "workspaces" ]
+    opacity = 1.0
+    padding = 8.0
+
+    [[bar.default.capsule_group]]
+    accordion = false
+    accordion_direction = "end"
+    border_width = 1.0
+    enabled = true
+    fill = "surface_container"
+    id = "g6"
+    members = [ "audio_visualizer", "media", "audio_visualizer" ]
     opacity = 1.0
     padding = 6.0
 
@@ -40,7 +84,9 @@ widget_order = [
     "desktop-widget-0000000000000001",
     "desktop-widget-0000000000000002",
     "desktop-widget-0000000000000003",
-    "desktop-widget-0000000000000004"
+    "desktop-widget-0000000000000004",
+    "desktop-widget-0000000000000005",
+    "desktop-widget-0000000000000006"
 ]
 
     [desktop_widgets.grid]
@@ -58,6 +104,9 @@ widget_order = [
     placement_width = 2560.0
     rotation = 0.0
     type = "clock"
+
+        [desktop_widgets.widget.desktop-widget-0000000000000001.settings]
+        format = "{:%-I:%M %p}"
 
     [desktop_widgets.widget.desktop-widget-0000000000000002]
     box_height = 128.0
@@ -101,6 +150,33 @@ widget_order = [
         image_path = "/home/mumsareawesome/Downloads/asuka-langley-soryu-rei-ayanami-shinji-ikari-kaworu-nagisa-evangelion-shiny-logo-afa2dae141c492c2934883177e3e4f61.png"
         opacity = 1.0
 
+    [desktop_widgets.widget.desktop-widget-0000000000000005]
+    box_height = 208.0
+    box_width = 336.0
+    cx = 2368.0
+    cy = 152.0
+    output = "HDMI-A-1"
+    placement_height = 1440.0
+    placement_width = 2560.0
+    rotation = 0.0
+    type = "tranzem/media-lyrics:desktop"
+
+    [desktop_widgets.widget.desktop-widget-0000000000000006]
+    box_height = 224.0
+    box_width = 288.0
+    cx = 160.0
+    cy = 1376.0
+    output = "HDMI-A-1"
+    placement_height = 1440.0
+    placement_width = 2560.0
+    rotation = 0.0
+    type = "sticker"
+
+        [desktop_widgets.widget.desktop-widget-0000000000000006.settings]
+        background = false
+        image_path = "/home/mumsareawesome/Documents/GitHub/hyprland-rice/pc/umbriel/Adaptive/asuka-langley-soryu-rei-ayanami-shinji-ikari-kaworu-nagisa-evangelion-shiny-logo-afa2dae141c492c2934883177e3e4f61.png"
+        opacity = 1.0
+
 [dock]
 auto_hide = true
 position = "left"
@@ -111,7 +187,7 @@ behavior_order = [ "lock", "screen-off", "lock-and-suspend" ]
 
     [idle.behavior.lock]
     action = "lock"
-    enabled = false
+    enabled = true
     timeout = 600.0
 
     [idle.behavior.lock-and-suspend]
@@ -154,7 +230,7 @@ widget_order = [
     type = "login_box"
 
         [lockscreen_widgets.widget."lockscreen-login-box@FALLBACK".settings]
-        background_color = "surface_variant"
+        background_color = "surface_container"
         background_opacity = 0.88
         background_radius = 12.0
         center_password_text = false
@@ -182,7 +258,7 @@ widget_order = [
     type = "login_box"
 
         [lockscreen_widgets.widget."lockscreen-login-box@HDMI-A-1".settings]
-        background_color = "surface_variant"
+        background_color = "surface_container"
         background_opacity = 0.88
         background_radius = 12.0
         center_password_text = false
@@ -220,12 +296,36 @@ widget_order = [
     rotation = 0.0
     type = "media_player"
 
+[osd]
+scale = 0.95000000670552254
+
+[plugin_settings."miixz/reaction"]
+hold_ms = 1000
+sticker_dir = "/home/mumsareawesome/Documents/GitHub/hyprland-rice/pc/umbriel/Adaptive"
+sticker_position = "bottom_right"
+
 [plugin_settings."noctalia/mpvpaper"]
 mute = false
 video_directory = "/home/mumsareawesome/Videos/rabbitHole"
 
 [plugins]
-enabled = [ "hy4ri/ds4-color" ]
+enabled = [
+    "yuuto/arch-updater",
+    "miixz/reaction",
+    "noctalia/screen_recorder",
+    "faminec/terminal-widgets",
+    "noctalia/umbriel-companion",
+    "tranzem/media-lyrics"
+]
+
+[shell]
+polkit_agent = true
+screen_time_enabled = true
+time_format = "{:%-I:%M %p}"
+umbriel_overview_type_to_launch_enabled = true
+
+    [shell.screenshot]
+    directory = "/home/mumsareawesome/Pictures/Screenshots"
 
 [theme]
 builtin = "Noctalia"
@@ -235,8 +335,8 @@ source = "wallpaper"
 wallpaper_scheme = "m3-rainbow"
 
     [theme.templates]
-    builtin_ids = [ "btop", "gtk3", "gtk4", "hyprland", "kitty" ]
-    community_ids = [ "discord", "superfile" ]
+    builtin_ids = [ "btop", "gtk3", "gtk4", "hyprland", "kitty", "umbriel" ]
+    community_ids = [ "discord", "obs", "superfile" ]
 
 [wallpaper]
 directory = "/home/mumsareawesome/.config/hypr/Wallpaper"
@@ -250,5 +350,20 @@ directory = "/home/mumsareawesome/.config/hypr/Wallpaper"
     [wallpaper.monitors.HDMI-A-1]
     path = "/home/mumsareawesome/.config/hypr/Wallpaper/asuka.png"
 
+[widget.audio_visualizer]
+bands = 5
+
+[widget.bar]
+type = "noctalia/umbriel-companion:bar"
+
 [widget.clock]
-enabled = false
+format = "{:%-I:%M}"
+
+[widget.lrc]
+type = "shin/lrc:lrc"
+
+[widget.recorder]
+type = "noctalia/screen_recorder:recorder"
+
+[widget.widget]
+type = "yuuto/arch-updater:widget"

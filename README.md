@@ -1,5 +1,5 @@
 # hyprland-rice
-This is my current Hyprland rice!
+This is my current Umbriel rice!
 
 Hope you enjoy.
 
@@ -7,9 +7,9 @@ To install run
 
 
 ```bash
-sudo pacman -S noctalia superfile kew mpv ffmpeg 7zip jq poppler fd ripgrep fzf zoxide resvg imagemagick
+sudo pacman -S noctalia kew
 
-yay -S bibata-cursor-theme
+yay -S bibata-cursor-theme luciole
 ```
 
 for a jp keyboard (lets note)
