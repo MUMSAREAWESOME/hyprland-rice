@@ -7,15 +7,15 @@
 files = []
 
 [include.optional]
+files = ["noctalia.toml"]
 
 # ==============================================================================
 # General
 # Optional session examples. XWayland support is enabled by default.
 # https://docs.noctalia.dev/umbriel/configuration/#general
 #
-files = ["noctalia.toml"]
 [general]
-autostart = ["noctalia", "kitty"]
+autostart = ["noctalia", "kitty", "easyeffects"]
 
 # ==============================================================================
 # Screencast
@@ -34,11 +34,12 @@ autostart = ["noctalia", "kitty"]
 #
 
 [output."*"]
-scale = 1.0                    # 1:1 scaling across displays
+mode = "1920x1080@60"      # Unlocks 75 Hz refresh rate
+scale = 1.0                    # Native 1440p scaling
+position = [0, 0]              # Array of [x, y] integers
 transform = "normal"           # Standard landscape orientation
-vrr = "fullscreen"             # Uses VRR only if the connected screen supports it
-workspace_axis = "horizontal"
-cyclic_workspaces = true
+workspace_axis = "horizontal"  # Arranges workspaces side-by-side
+cyclic_workspaces = true       # Loops back to workspace 1 at the end
 
 
 # ==============================================================================
@@ -169,7 +170,7 @@ extent_presets = [0.333, 0.5, 0.667]
 gap = 5 # Space between windows and screen edges in logical pixels (default: 8)
 
 [appearance]
-corner_radius = 10      # Roundness of window corners in logical pixels (default: 10)
+corner_radius = 1      # Roundness of window corners in logical pixels (default: 10)
 border_width = 2        # Inner border thickness (default: 2)
 outer_border_width = 0  # Optional outer border ring (default: 0)
 

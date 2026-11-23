@@ -15,7 +15,7 @@ files = ["noctalia.toml"]
 # https://docs.noctalia.dev/umbriel/configuration/#general
 #
 [general]
-autostart = ["noctalia", "kitty"]
+autostart = ["noctalia", "kitty", "easyeffects"]
 
 # ==============================================================================
 # Screencast
@@ -171,7 +171,7 @@ extent_presets = [0.333, 0.5, 0.667]
 gap = 5 # Space between windows and screen edges in logical pixels (default: 8)
 
 [appearance]
-corner_radius = 10      # Roundness of window corners in logical pixels (default: 10)
+corner_radius = 1      # Roundness of window corners in logical pixels (default: 10)
 border_width = 2        # Inner border thickness (default: 2)
 outer_border_width = 0  # Optional outer border ring (default: 0)
 
