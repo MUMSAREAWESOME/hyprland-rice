@@ -31,6 +31,7 @@ lsblk "$DISK"
 echo
 echo "WARNING: This will FORMAT $EFI_PART (EFI), $ROOT_PART (root) and $SWAP_PART (swap)."
 echo "Everything on them will be destroyed."
+echo "If Windows or another Linux shares $EFI_PART, its boot files will be wiped too."
 read -rp "Type 'yes' to continue: " confirm
 if [[ $confirm != "yes" ]]; then
     echo "Aborted. Nothing was touched. I wasn't worried about you or anything."
@@ -73,6 +74,10 @@ echo "LANG=en_AU.UTF-8" > /etc/locale.conf
 echo "KEYMAP=us" > /etc/vconsole.conf
 echo "$HOSTNAME" > /etc/hostname
 
+# Multilib (32-bit packages, needed for Steam, Wine and friends)
+sed -i '/^#\[multilib\]/,/^#Include/ s/^#//' /etc/pacman.conf
+pacman -Sy
+
 # Users & permissions
 echo "Set the root password:"
 passwd
@@ -92,8 +97,52 @@ visudo -cf /etc/sudoers.d/10-wheel
 
 # Bootloader
 pacman -S --needed --noconfirm grub efibootmgr
-grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
+
+# --removable also writes EFI/BOOT/BOOTX64.EFI, the fallback that boards
+# ignoring NVRAM entries will still boot
+grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB --removable
 grub-mkconfig -o /boot/grub/grub.cfg
+
+# Move the GRUB entry to the front of the boot order
+grub_num=$(efibootmgr | grep -i ' GRUB' | head -n1 | sed -E 's/^Boot([0-9A-Fa-f]{4}).*/\1/' || true)
+if [[ -n "$grub_num" ]]; then
+    others=$(efibootmgr | awk '/BootOrder/ {print $2}' | tr ',' '\n' \
+        | grep -vx "$grub_num" | paste -sd, - || true)
+    efibootmgr -o "$grub_num${others:+,$others}"
+else
+    echo "Warning: no GRUB entry found in efibootmgr. Check the boot order by hand."
+fi
+
+# Networking
+systemctl enable NetworkManager
+
+# Apps
+pacman -S --needed --noconfirm helix
+
+# LibreWolf is AUR-only. makepkg won't run as root, so build yay as the user.
+# The temporary NOPASSWD rule lets the AUR builds run unattended, and it's removed afterwards.
+echo "$USERNAME ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/99-temp-build
+chmod 440 /etc/sudoers.d/99-temp-build
+
+set +e
+runuser -u "$USERNAME" -- bash -c '
+    set -e
+    cd /tmp
+    rm -rf yay-bin
+    git clone https://aur.archlinux.org/yay-bin.git
+    cd yay-bin
+    makepkg -si --noconfirm
+    cd /tmp
+    yay -S --needed --noconfirm librewolf-bin
+'
+aur_status=$?
+set -e
+
+rm -f /etc/sudoers.d/99-temp-build
+
+if [[ $aur_status -ne 0 ]]; then
+    echo "Warning: LibreWolf install failed. Run 'yay -S librewolf-bin' as $USERNAME after first boot."
+fi
 
 echo "Chroot configuration complete."
 CHROOT_EOF
@@ -103,5 +152,5 @@ arch-chroot /mnt /root/chroot-setup.sh "$HOSTNAME" "$USERNAME" "$TIMEZONE"
 rm -f /mnt/root/chroot-setup.sh
 
 echo
-echo "Base install and bootloader done. Hmph, not bad. Don't get used to it."
-echo "Still manual: desktop packages, enabling services, and the final exit/unmount."
+echo "Base install, bootloader, networking, Helix and LibreWolf done. Hmph, not bad."
+echo "Still manual: desktop packages, enabling sddm, and the final exit/unmount."
