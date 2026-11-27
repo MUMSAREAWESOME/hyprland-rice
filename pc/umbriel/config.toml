@@ -15,7 +15,7 @@ files = ["noctalia.toml"]
 # https://docs.noctalia.dev/umbriel/configuration/#general
 #
 [general]
-autostart = ["noctalia", "kitty", "easyeffects"]
+autostart = ["noctalia", "kitty", "easyeffects", "musicpresence"]
 
 # ==============================================================================
 # Screencast
@@ -207,6 +207,11 @@ default_position = { x = 0, y = 0, anchor = "bottom_right" }
 default_focused = false
 default_pinned = true
 
+[[window_rule]]
+match.app_id = "^kitty$"
+default_floating = true
+default_floating_size = { width = 0.29, height = 0.2 }
+default_position = { x = 15, y = 15, anchor = "bottom_right" }
 
 # Make unfocused windows semi-transparent
 [[window_rule]]
