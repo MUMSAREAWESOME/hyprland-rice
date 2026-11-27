@@ -25,3 +25,9 @@ gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
 # Enable mandatory things
 sudo systemctl enable --now bluetooth.service
 
+git clone https://github.com/charichard08/Evangelion-archive/tree/main/
+cd Evangelion-archive
+
+./install.sh
+
+sudo reboot
