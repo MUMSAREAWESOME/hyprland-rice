@@ -7,9 +7,9 @@ To install run
 
 
 ```bash
-sudo pacman -S noctalia kew
+sudo pacman -S noctalia kew superfile	imagemagick
 
-yay -S bibata-cursor-theme luciole
+yay -S bibata-cursor-theme luciole umbriel
 ```
 
 for a jp keyboard (lets note)
