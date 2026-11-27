@@ -8,7 +8,7 @@ git clone https://github.com/MUMSAREAWESOME/hyprland-rice
 cd hyprland-rice/pc
 
 # Install dependencies
-sudo pacman -S noctalia kew superfile	imagemagick bluez bluez-utils helix librewolf steam sddm
+sudo pacman -S noctalia kew superfile	imagemagick bluez bluez-utils helix librewolf steam sddm starship fish
 yay -S bibata-cursor-theme luciole umbriel xdg-desktop-portal-umbriel
 
 # Add files to the right locations
@@ -46,6 +46,6 @@ sudo cp asuka.mp4 sudo cp hyprland_kath.conf /usr/share/sddm/themes/sddm-astrona
 
 cd ~
 
-sudo systemctl enable --now bluetooth.service sddm
+chsh -s /usr/bin/fish
 
-sudo reboot
+sudo systemctl enable --now bluetooth.service sddm
