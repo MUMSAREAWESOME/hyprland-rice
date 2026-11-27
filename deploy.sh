@@ -8,7 +8,7 @@ git clone https://github.com/MUMSAREAWESOME/hyprland-rice
 cd hyprland-rice/pc
 
 # Install dependencies
-sudo pacman -S noctalia kew superfile	imagemagick bluez bluez-utils helix librewolf steam sddm starship fish
+sudo pacman -S noctalia kew superfile	imagemagick bluez bluez-utils helix librewolf steam sddm starship fish fastfetch
 yay -S bibata-cursor-theme luciole umbriel xdg-desktop-portal-umbriel
 
 # Add files to the right locations
