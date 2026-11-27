@@ -1,51 +1,75 @@
-#!/bin/bash
-echo "Setting up packages...\n"
+#!/usr/bin/env bash
+set -euo pipefail
 
-cd ~
+REPO_URL="https://github.com/MUMSAREAWESOME/hyprland-rice"
+REPO_DIR="$HOME/hyprland-rice"
 
-# Get the repo
-git clone https://github.com/MUMSAREAWESOME/hyprland-rice
-cd hyprland-rice/pc
+log() { printf '\n==> %s\n' "$*"; }
 
-# Install dependencies
-sudo pacman -S noctalia kew superfile	imagemagick bluez bluez-utils helix librewolf steam sddm starship fish fastfetch
-yay -S bibata-cursor-theme luciole umbriel xdg-desktop-portal-umbriel
+# Copy the contents of a folder into a destination, merging instead of nesting
+copy_dir() {
+  mkdir -p "$2"
+  cp -r "$1"/. "$2"/
+}
 
-# Add files to the right locations
-cp -r noctalia/ ~/.config/noctalia/
-cp -r umbriel/ ~/.config/umbriel/
-cp -r fastfetch/ ~/.config/fastfetch/
-cp -r fish/ ~/.config/fish/
-cp -r kitty/ ~/.config/kitty/
-mkdir -p ~/Pictures
-cp -r Wallpaper/ ~/Pictures/Wallpapers
-cp starship.toml/ ~/.config/
+log "Getting the repo..."
+if [ -d "$REPO_DIR/.git" ]; then
+  git -C "$REPO_DIR" pull --ff-only
+else
+  git clone "$REPO_URL" "$REPO_DIR"
+fi
+cd "$REPO_DIR/pc"
 
-cd ~
+log "Installing official packages..."
+# If any of these aren't found, check whether they're AUR-only and move them to the yay line
+sudo pacman -Syu --needed noctalia kew superfile imagemagick bluez bluez-utils \
+  helix steam sddm starship fish fastfetch kitty
 
-# Dark mode is nice
-gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
+log "Installing AUR packages..."
+if ! command -v yay >/dev/null; then
+  echo "yay isn't installed. Install it from the AUR first, then re-run."
+  exit 1
+fi
+yay -S --needed bibata-cursor-theme luciole umbriel xdg-desktop-portal-umbriel librewolf
 
-# Enable mandatory things
-sudo systemctl enable --now bluetooth.service sddm
+log "Copying configs..."
+copy_dir noctalia   "$HOME/.config/noctalia"
+copy_dir umbriel    "$HOME/.config/umbriel"
+copy_dir fastfetch  "$HOME/.config/fastfetch"
+copy_dir fish       "$HOME/.config/fish"
+copy_dir kitty      "$HOME/.config/kitty"
+cp starship.toml "$HOME/.config/starship.toml"
 
-git clone https://github.com/charichard08/Evangelion-archive/tree/main/
-cd Evangelion-archive
+log "Copying wallpapers..."
+copy_dir Wallpaper "$HOME/Pictures/Wallpapers"
 
-./install.sh
+log "Setting dark mode..."
+gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark' \
+  || echo "gsettings failed (no dconf session?), skipping"
 
-cd ~
+log "Setting up SDDM theme..."
+if [ ! -d /usr/share/sddm/themes/sddm-astronaut-theme ]; then
+  bash -c "$(curl -fsSL https://raw.githubusercontent.com/keyitdev/sddm-astronaut-theme/master/setup.sh)"
+fi
+sudo cp "$REPO_DIR/letsnote/hyprland_kath.conf" \
+  /usr/share/sddm/themes/sddm-astronaut-theme/Themes/
+sudo cp "$REPO_DIR/letsnote/asuka.mp4" \
+  /usr/share/sddm/themes/sddm-astronaut-theme/Backgrounds/
 
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/keyitdev/sddm-astronaut-theme/master/setup.sh)"
+log "Installing Evangelion theme..."
+EVA_DIR="$HOME/Evangelion-archive"
+if [ ! -d "$EVA_DIR" ]; then
+  git clone https://github.com/charichard08/Evangelion-archive "$EVA_DIR"
+fi
+bash "$EVA_DIR/install.sh"
 
-cd hyprland-rice/letsnote/
+log "Enabling services..."
+sudo systemctl enable --now bluetooth.service
+sudo systemctl enable sddm.service   # takes effect on reboot, doesn't kick you out now
 
-sudo cp hyprland_kath.conf /usr/share/sddm/themes/sddm-astronaut-theme/Themes/hyprland_kath.conf
+log "Setting fish as default shell..."
+FISH_PATH="$(command -v fish)"
+grep -qx "$FISH_PATH" /etc/shells || echo "$FISH_PATH" | sudo tee -a /etc/shells >/dev/null
+chsh -s "$FISH_PATH"
 
-sudo cp asuka.mp4 sudo cp hyprland_kath.conf /usr/share/sddm/themes/sddm-astronaut-theme/Backgrounds/asuka.mp4
-
-cd ~
-
-chsh -s /usr/bin/fish
-
-sudo systemctl enable --now bluetooth.service sddm
+log "Done! Reboot to land in SDDM."
