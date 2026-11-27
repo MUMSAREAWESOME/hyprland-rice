@@ -328,3 +328,6 @@ sudo -v
 if [ "$MODE" = install ]; then
   do_install
 else
+  do_undo
+fi
+EOF_MARKER_NOT_NEEDED
