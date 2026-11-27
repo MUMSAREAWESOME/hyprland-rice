@@ -54,8 +54,11 @@ OFFICIAL_PKGS=(
   gstreamer gst-plugins-good gst-plugins-bad gst-plugins-ugly
   qt6-svg qt6-virtualkeyboard qt6-declarative qt6-multimedia-ffmpeg
 )
-AUR_PKGS=(xdg-desktop-portal-umbriel-git)
-
+AUR_PKGS=(
+  umbriel-git
+  luciole-git
+  xdg-desktop-portal-umbriel-git
+)
 # Config mapping. Each entry is: destination|source
 # Everything except SDDM comes from pc/.
 TREES=(
