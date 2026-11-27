@@ -1,6 +1,8 @@
 #!/bin/bash
 echo "Setting up packages...\n"
 
+cd ~
+
 # Get the repo
 git clone https://github.com/MUMSAREAWESOME/hyprland-rice
 cd hyprland-rice/pc
