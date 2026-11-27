@@ -4,8 +4,8 @@ set -euo pipefail
 
 DISK="/dev/nvme0n1"
 EFI_PART="${DISK}p1"
-ROOT_PART="${DISK}p2"
-SWAP_PART="${DISK}p3"
+ROOT_PART="${DISK}p3"
+SWAP_PART="${DISK}p2"
 HOSTNAME="awesome-pc"
 USERNAME="mumsareawesome"
 TIMEZONE="Australia/Brisbane"
