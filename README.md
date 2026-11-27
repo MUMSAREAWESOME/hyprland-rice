@@ -5,15 +5,6 @@ Hope you enjoy.
 
 To install run
 
-
-```bash
-sudo pacman -S noctalia kew superfile	imagemagick bluez bluez-utils
-
-yay -S bibata-cursor-theme luciole umbriel
-
-sudo systemctl enable --now bluetooth.service
-```
-
 for a jp keyboard (lets note)
 
 ```bash

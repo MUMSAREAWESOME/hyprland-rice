@@ -6,9 +6,6 @@
 [include]
 files = []
 
-[include.optional]
-files = ["noctalia.toml"]
-
 # ==============================================================================
 # General
 # Optional session examples. XWayland support is enabled by default.
@@ -85,8 +82,9 @@ XCURSOR_SIZE = "24"
 "Ctrl+Shift+grave" = { action = "spawn noctalia msg plugin miixz/reaction:service all hide"  }
  
 "Mod+Return" = { action = "spawn kitty", repeat = false }
-"Mod+E" = { action = "spawn luciole" }
-"Mod+O" = { action = "spawn kitty -e kew" }
+"Mod+Shift+Return" = { action = "spawn kitty --class kitty-normal", repeat = false }
+"Mod+E" = { action = "spawn kitty --class kitty-spf -e spf", repeat = false }
+"Mod+O" = { action = "spawn kitty -e kew", repeat = false }
 "Mod+Space" = { action = "spawn noctalia msg settings-toggle" }
 "Mod+S" = { action = "spawn noctalia msg panel-toggle control-center" }
 "Mod+L" = { action = "spawn noctalia msg session lock" }
@@ -110,11 +108,17 @@ XCURSOR_SIZE = "24"
 "XF86MonBrightnessUp" = { action = "spawn noctalia msg brightness-up", allow_when_locked = true }
 "XF86MonBrightnessDown" = { action = "spawn noctalia msg brightness-down", allow_when_locked = true }
 
-# Focus and movement
-"Mod+Shift+Left" = "window-focus-left"
-"Mod+Shift+Down" = "window-focus-down"
-"Mod+Shift+Up" = "window-focus-up"
-"Mod+Shift+Right" = "window-focus-right"
+# Focus
+"Mod+Left" = "window-focus-left"
+"Mod+Down" = "window-focus-down"
+"Mod+Up" = "window-focus-up"
+"Mod+Right" = "window-focus-right"
+
+# Movement
+"Mod+Ctrl+Left" = "window-move-left"
+"Mod+Ctrl+Down" = "window-move-down"
+"Mod+Ctrl+Up" = "window-move-up"
+"Mod+Ctrl+Right" = "window-move-right"
 
 # Window state and layout
 "Mod+P" = { action = "window-toggle-floating", repeat = false }
@@ -150,8 +154,8 @@ XCURSOR_SIZE = "24"
 "Mod+Shift+7" = "window-move-to-workspace 7"
 "Mod+Shift+8" = "window-move-to-workspace 8"
 "Mod+Shift+9" = "window-move-to-workspace 9"
-"Mod+Right" = "workspace-next"
-"Mod+Left" = "workspace-previous"
+"Mod+Shift+Right" = "workspace-next"
+"Mod+Shift+Left" = "workspace-previous"
 
 # Scratchpad
 "Mod+Shift+K" = { action = "window-move-to-scratchpad", repeat = false }
