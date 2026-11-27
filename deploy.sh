@@ -46,4 +46,6 @@ sudo cp asuka.mp4 sudo cp hyprland_kath.conf /usr/share/sddm/themes/sddm-astrona
 
 cd ~
 
+sudo systemctl enable --now bluetooth.service sddm
+
 sudo reboot
