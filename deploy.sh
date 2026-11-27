@@ -4,6 +4,15 @@ set -euo pipefail
 REPO_URL="https://github.com/MUMSAREAWESOME/hyprland-rice"
 REPO_DIR="$HOME/hyprland-rice"
 
+OFFICIAL_PKGS=(
+  noctalia kew superfile imagemagick bluez bluez-utils
+  helix steam sddm starship fish fastfetch kitty
+  gstreamer gst-plugins-good gst-plugins-bad gst-plugins-ugly
+)
+AUR_PKGS=(
+  bibata-cursor-theme luciole umbriel xdg-desktop-portal-umbriel librewolf
+)
+
 log() { printf '\n==> %s\n' "$*"; }
 
 # Copy the contents of a folder into a destination, merging instead of nesting
@@ -21,16 +30,19 @@ fi
 cd "$REPO_DIR/pc"
 
 log "Installing official packages..."
-# If any of these aren't found, check whether they're AUR-only and move them to the yay line
-sudo pacman -Syu --needed noctalia kew superfile imagemagick bluez bluez-utils \
-  helix steam sddm starship fish fastfetch kitty
+sudo pacman -Syu --needed "${OFFICIAL_PKGS[@]}"
 
-log "Installing AUR packages..."
+log "Installing AUR packages (failures won't stop the script)..."
 if ! command -v yay >/dev/null; then
   echo "yay isn't installed. Install it from the AUR first, then re-run."
   exit 1
 fi
-yay -S --needed bibata-cursor-theme luciole umbriel xdg-desktop-portal-umbriel librewolf
+AUR_FAILED=()
+for pkg in "${AUR_PKGS[@]}"; do
+  if ! yay -S --needed "$pkg"; then
+    AUR_FAILED+=("$pkg")
+  fi
+done
 
 log "Copying configs..."
 copy_dir noctalia   "$HOME/.config/noctalia"
@@ -72,4 +84,12 @@ FISH_PATH="$(command -v fish)"
 grep -qx "$FISH_PATH" /etc/shells || echo "$FISH_PATH" | sudo tee -a /etc/shells >/dev/null
 chsh -s "$FISH_PATH"
 
-log "Done! Reboot to land in SDDM."
+log "Summary"
+if [ "${#AUR_FAILED[@]}" -gt 0 ]; then
+  echo "These AUR packages failed to install: ${AUR_FAILED[*]}"
+  echo "Check the output above. A dependency like python2-imaging is the usual cause."
+  echo "The rest of the rice was still set up."
+else
+  echo "All AUR packages installed."
+fi
+echo "Done! Reboot to land in SDDM."
