@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rice.sh: install (default) or undo (--undo) the hyprland rice on Arch.
+# rice.sh: install (default) or undo (--undo) the umbriel rice on Arch.
 #
 #   ./rice.sh                      install everything
 #   ./rice.sh --no-sddm            skip the SDDM login screen
@@ -31,7 +31,7 @@ done
 REPO_URL="https://github.com/MUMSAREAWESOME/hyprland-rice"
 REPO_DIR="$HOME/Documents/GitHub/hyprland-rice"
 PC="$REPO_DIR/pc"
-LETSNOTE="$REPO_DIR/letsnote"
+LETSNOTE="$REPO_DIR/letsnote"   # only used for the SDDM files
 CONF="$HOME/.config"
 PICTURES="$HOME/Pictures"
 
@@ -47,8 +47,8 @@ EVA_DIR="$HOME/Evangelion-${EVA_VERSION}"
 
 LOG_FILE="$HOME/rice-$MODE-$(date +%Y%m%d-%H%M%S).log"
 
+# No Hyprland here: the rice runs on umbriel, so Hyprland is not installed by this script.
 OFFICIAL_PKGS=(
-  hyprland xdg-desktop-portal-hyprland
   noctalia kew superfile imagemagick bluez bluez-utils
   helix steam sddm starship fish fastfetch kitty curl git
   gstreamer gst-plugins-good gst-plugins-bad gst-plugins-ugly
@@ -56,20 +56,18 @@ OFFICIAL_PKGS=(
 )
 AUR_PKGS=(xdg-desktop-portal-umbriel-git)
 
-# Config mapping. Each entry is: destination|source1|source2|...
-# Sources are applied in order, so later ones overwrite earlier ones.
+# Config mapping. Each entry is: destination|source
+# Everything except SDDM comes from pc/.
 TREES=(
   "$CONF/noctalia|$PC/noctalia"
   "$CONF/umbriel|$PC/umbriel"
   "$CONF/fastfetch|$PC/fastfetch"
-  "$CONF/fish|$PC/fish|$LETSNOTE/fish"
-  "$CONF/kitty|$PC/kitty|$LETSNOTE/kitty"
-  "$CONF/helix|$LETSNOTE/helix"
-  "$CONF/hypr|$LETSNOTE/hypr"
+  "$CONF/fish|$PC/fish"
+  "$CONF/kitty|$PC/kitty"
   "$PICTURES/Wallpapers|$PC/Wallpaper"
 )
 FILES=(
-  "$CONF/starship.toml|$PC/starship.toml|$LETSNOTE/starship.toml"
+  "$CONF/starship.toml|$PC/starship.toml"
 )
 
 AUR_FAILED=()
@@ -117,47 +115,33 @@ copy_file() {
   cp "$src" "$dst"
 }
 
-# Undo: delete files in $dst that match ANY of the sources (byte-identical).
+# Undo: delete files in $dst that are byte-identical to the source.
 # Anything modified since install is kept and reported. Empty folders are pruned.
 unuse_tree() {
-  local dst="$1"; shift
-  [ -d "$dst" ] || return 0
-  local src rel target s matched
-  for src in "$@"; do
-    [ -d "$src" ] || continue
-    while IFS= read -r -d '' rel; do
-      rel="${rel#./}"
-      target="$dst/$rel"
-      [ -f "$target" ] || continue
-      matched=0
-      for s in "$@"; do
-        if [ -f "$s/$rel" ] && cmp -s -- "$s/$rel" "$target"; then
-          matched=1; break
-        fi
-      done
-      if [ "$matched" -eq 1 ]; then
-        rm -f -- "$target"
-      else
-        note "kept (modified): $target"
-      fi
-    done < <(cd "$src" && find . -type f -print0)
-  done
+  local src="$1" dst="$2"
+  [ -d "$src" ] && [ -d "$dst" ] || return 0
+  local rel
+  while IFS= read -r -d '' rel; do
+    rel="${rel#./}"
+    if cmp -s -- "$src/$rel" "$dst/$rel"; then
+      rm -f -- "$dst/$rel"
+    else
+      note "kept (modified): $dst/$rel"
+    fi
+  done < <(cd "$src" && find . -type f -print0)
   find "$dst" -depth -type d -empty -delete 2>/dev/null || true
 }
 
-# Undo: delete one file if it matches any of the sources
+# Undo: delete one file if it's byte-identical to the source
 unuse_file() {
-  local dst="$1"; shift
+  local src="$1" dst="$2"
   [ -f "$dst" ] || return 0
-  local s
-  for s in "$@"; do
-    if [ -f "$s" ] && cmp -s -- "$s" "$dst"; then
-      rm -f -- "$dst"
-      note "removed: $dst"
-      return 0
-    fi
-  done
-  note "kept (modified): $dst"
+  if [ -f "$src" ] && cmp -s -- "$src" "$dst"; then
+    rm -f -- "$dst"
+    note "removed: $dst"
+  else
+    note "kept (modified): $dst"
+  fi
 }
 
 print_summary() {
@@ -202,22 +186,17 @@ do_install() {
     yay -S --needed "$pkg" || AUR_FAILED+=("$pkg")
   done
 
-  log "Copying configs (later sources overwrite earlier ones)..."
+  log "Copying configs from pc/..."
   local entry dst src
-  local -a parts
   for entry in "${TREES[@]}"; do
-    IFS='|' read -ra parts <<< "$entry"
-    dst="${parts[0]}"
-    for src in "${parts[@]:1}"; do
-      copy_tree "$src" "$dst"
-    done
+    dst="${entry%%|*}"
+    src="${entry#*|}"
+    copy_tree "$src" "$dst"
   done
   for entry in "${FILES[@]}"; do
-    IFS='|' read -ra parts <<< "$entry"
-    dst="${parts[0]}"
-    for src in "${parts[@]:1}"; do
-      copy_file "$src" "$dst"
-    done
+    dst="${entry%%|*}"
+    src="${entry#*|}"
+    copy_file "$src" "$dst"
   done
 
   log "Setting dark mode..."
@@ -238,7 +217,7 @@ do_install() {
     sudo mkdir -p /usr/share/fonts
     sudo cp -r "$THEME_DIR/Fonts/." /usr/share/fonts/
 
-    log "Adding your Kath config and video..."
+    log "Adding your Kath config and video from letsnote/..."
     if [ -f "$LETSNOTE/hyprland_kath.conf" ]; then
       sudo install -Dm644 "$LETSNOTE/hyprland_kath.conf" "$THEME_DIR/Themes/hyprland_kath.conf"
       sudo sed -i 's|^ConfigFile=.*|ConfigFile=Themes/hyprland_kath.conf|' "$THEME_DIR/metadata.desktop"
@@ -301,17 +280,16 @@ do_install() {
 
 do_undo() {
   log "Removing configs (only files identical to what this script copied)..."
-  local entry dst
-  local -a parts
+  local entry dst src
   for entry in "${TREES[@]}"; do
-    IFS='|' read -ra parts <<< "$entry"
-    dst="${parts[0]}"
-    unuse_tree "$dst" "${parts[@]:1}"
+    dst="${entry%%|*}"
+    src="${entry#*|}"
+    unuse_tree "$src" "$dst"
   done
   for entry in "${FILES[@]}"; do
-    IFS='|' read -ra parts <<< "$entry"
-    dst="${parts[0]}"
-    unuse_file "$dst" "${parts[@]:1}"
+    dst="${entry%%|*}"
+    src="${entry#*|}"
+    unuse_file "$src" "$dst"
   done
 
   log "Restoring your shell..."
