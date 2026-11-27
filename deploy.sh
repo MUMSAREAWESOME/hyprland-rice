@@ -1,8 +1,15 @@
 #!/usr/bin/env bash
-set -euo pipefail
+# deploy.sh: set up the hyprland rice on Arch Linux
+set -Eeuo pipefail
 
 REPO_URL="https://github.com/MUMSAREAWESOME/hyprland-rice"
 REPO_DIR="$HOME/hyprland-rice"
+CONFIG_DIR="$HOME/.config"
+PICTURES_DIR="$HOME/Pictures"
+SDDM_THEME="/usr/share/sddm/themes/sddm-astronaut-theme"
+EVA_REPO="https://github.com/charichard08/Evangelion-archive"
+EVA_DIR="$HOME/Evangelion-archive"
+LOG_FILE="$HOME/deploy-$(date +%Y%m%d-%H%M%S).log"
 
 OFFICIAL_PKGS=(
   noctalia kew superfile imagemagick bluez bluez-utils
@@ -10,20 +17,55 @@ OFFICIAL_PKGS=(
   gstreamer gst-plugins-good gst-plugins-bad gst-plugins-ugly
 )
 AUR_PKGS=(
-  bibata-cursor-theme luciole umbriel xdg-desktop-portal-umbriel librewolf
+  bibata-cursor-theme
+  umbriel-git
+  xdg-desktop-portal-umbriel
+  librewolf
 )
 
-log() { printf '\n==> %s\n' "$*"; }
+AUR_FAILED=()
+WARNINGS=()
+
+# Log everything to the terminal and to a file
+exec > >(tee -a "$LOG_FILE") 2>&1
+
+log()  { printf '\n==> %s\n' "$*"; }
+warn() { printf 'WARNING: %s\n' "$*"; WARNINGS+=("$*"); }
+die()  { printf 'ERROR: %s\n' "$*" >&2; exit 1; }
+
+trap 'echo "ERROR: failed at line $LINENO. Full log: $LOG_FILE" >&2' ERR
 
 # Copy the contents of a folder into a destination, merging instead of nesting
 copy_dir() {
-  mkdir -p "$2"
-  cp -r "$1"/. "$2"/
+  local src="$1" dst="$2"
+  if [ ! -d "$src" ]; then
+    warn "missing folder in repo: $src (skipped)"
+    return 0
+  fi
+  mkdir -p "$dst"
+  cp -r "$src"/. "$dst"/
 }
+
+# Copy a single file, skipping with a warning if it's not in the repo
+copy_file() {
+  local src="$1" dst="$2"
+  if [ -f "$src" ]; then
+    cp "$src" "$dst"
+  else
+    warn "missing file in repo: $src (skipped)"
+  fi
+}
+
+# Sanity checks
+[ "$EUID" -ne 0 ] || die "don't run this as root. Run it as your normal user; it uses sudo where needed."
+[ -f /etc/arch-release ] || die "this script is for Arch Linux only."
+
+log "Checking sudo access..."
+sudo -v
 
 log "Getting the repo..."
 if [ -d "$REPO_DIR/.git" ]; then
-  git -C "$REPO_DIR" pull --ff-only
+  git -C "$REPO_DIR" pull --ff-only || warn "could not update repo (local changes?). Using the existing copy."
 else
   git clone "$REPO_URL" "$REPO_DIR"
 fi
@@ -32,12 +74,16 @@ cd "$REPO_DIR/pc"
 log "Installing official packages..."
 sudo pacman -Syu --needed "${OFFICIAL_PKGS[@]}"
 
-log "Installing AUR packages (failures won't stop the script)..."
+log "Making sure yay is installed..."
 if ! command -v yay >/dev/null; then
-  echo "yay isn't installed. Install it from the AUR first, then re-run."
-  exit 1
+  sudo pacman -S --needed --noconfirm base-devel git
+  tmp="$(mktemp -d)"
+  git clone https://aur.archlinux.org/yay-bin.git "$tmp/yay-bin"
+  (cd "$tmp/yay-bin" && makepkg -si)
+  rm -rf "$tmp"
 fi
-AUR_FAILED=()
+
+log "Installing AUR packages (failures won't stop the script)..."
 for pkg in "${AUR_PKGS[@]}"; do
   if ! yay -S --needed "$pkg"; then
     AUR_FAILED+=("$pkg")
@@ -45,51 +91,65 @@ for pkg in "${AUR_PKGS[@]}"; do
 done
 
 log "Copying configs..."
-copy_dir noctalia   "$HOME/.config/noctalia"
-copy_dir umbriel    "$HOME/.config/umbriel"
-copy_dir fastfetch  "$HOME/.config/fastfetch"
-copy_dir fish       "$HOME/.config/fish"
-copy_dir kitty      "$HOME/.config/kitty"
-cp starship.toml "$HOME/.config/starship.toml"
+copy_dir noctalia  "$CONFIG_DIR/noctalia"
+copy_dir umbriel   "$CONFIG_DIR/umbriel"
+copy_dir fastfetch "$CONFIG_DIR/fastfetch"
+copy_dir fish      "$CONFIG_DIR/fish"
+copy_dir kitty     "$CONFIG_DIR/kitty"
+copy_file starship.toml "$CONFIG_DIR/starship.toml"
 
 log "Copying wallpapers..."
-copy_dir Wallpaper "$HOME/Pictures/Wallpapers"
+copy_dir Wallpaper "$PICTURES_DIR/Wallpapers"
 
 log "Setting dark mode..."
-gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark' \
-  || echo "gsettings failed (no dconf session?), skipping"
+if ! gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark' 2>/dev/null; then
+  warn "could not set dark mode (no dconf session). Run it from inside Hyprland if you want it."
+fi
 
 log "Setting up SDDM theme..."
-if [ ! -d /usr/share/sddm/themes/sddm-astronaut-theme ]; then
+if [ ! -d "$SDDM_THEME" ]; then
   bash -c "$(curl -fsSL https://raw.githubusercontent.com/keyitdev/sddm-astronaut-theme/master/setup.sh)"
 fi
-sudo cp "$REPO_DIR/letsnote/hyprland_kath.conf" \
-  /usr/share/sddm/themes/sddm-astronaut-theme/Themes/
-sudo cp "$REPO_DIR/letsnote/asuka.mp4" \
-  /usr/share/sddm/themes/sddm-astronaut-theme/Backgrounds/
+if [ -f "$REPO_DIR/letsnote/hyprland_kath.conf" ]; then
+  sudo cp "$REPO_DIR/letsnote/hyprland_kath.conf" "$SDDM_THEME/Themes/"
+else
+  warn "hyprland_kath.conf not found in letsnote/ (skipped)"
+fi
+if [ -f "$REPO_DIR/letsnote/asuka.mp4" ]; then
+  sudo cp "$REPO_DIR/letsnote/asuka.mp4" "$SDDM_THEME/Backgrounds/"
+else
+  warn "asuka.mp4 not found in letsnote/ (skipped)"
+fi
 
 log "Installing Evangelion theme..."
-EVA_DIR="$HOME/Evangelion-archive"
 if [ ! -d "$EVA_DIR" ]; then
-  git clone https://github.com/charichard08/Evangelion-archive "$EVA_DIR"
+  git clone "$EVA_REPO" "$EVA_DIR"
 fi
-bash "$EVA_DIR/install.sh"
+# This is a third-party script. Skim it first if you're unsure: less "$EVA_DIR/install.sh"
+bash "$EVA_DIR/install.sh" || warn "Evangelion installer failed"
 
 log "Enabling services..."
 sudo systemctl enable --now bluetooth.service
-sudo systemctl enable sddm.service   # takes effect on reboot, doesn't kick you out now
+sudo systemctl enable -f sddm.service   # -f switches the display manager to sddm
 
-log "Setting fish as default shell..."
+log "Setting fish as the default shell..."
 FISH_PATH="$(command -v fish)"
-grep -qx "$FISH_PATH" /etc/shells || echo "$FISH_PATH" | sudo tee -a /etc/shells >/dev/null
-chsh -s "$FISH_PATH"
+if ! grep -qx "$FISH_PATH" /etc/shells; then
+  echo "$FISH_PATH" | sudo tee -a /etc/shells >/dev/null
+fi
+CURRENT_SHELL="$(getent passwd "$USER" | cut -d: -f7)"
+if [ "$CURRENT_SHELL" != "$FISH_PATH" ]; then
+  chsh -s "$FISH_PATH"
+fi
 
 log "Summary"
 if [ "${#AUR_FAILED[@]}" -gt 0 ]; then
-  echo "These AUR packages failed to install: ${AUR_FAILED[*]}"
-  echo "Check the output above. A dependency like python2-imaging is the usual cause."
-  echo "The rest of the rice was still set up."
-else
-  echo "All AUR packages installed."
+  echo "AUR packages that failed: ${AUR_FAILED[*]}"
+  echo "Usually this is a dead dependency. Check the output above."
 fi
+if [ "${#WARNINGS[@]}" -gt 0 ]; then
+  echo "Warnings:"
+  printf '  - %s\n' "${WARNINGS[@]}"
+fi
+echo "Full log: $LOG_FILE"
 echo "Done! Reboot to land in SDDM."
